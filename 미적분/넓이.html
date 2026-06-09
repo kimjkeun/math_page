@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>넓이</title>
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1a2e2a;
+    --paper:#f6f4ec;
+    --panel:#fffdf7;
+    --line:#d8d2c0;
+    --grid:#e9e4d6;
+    --teal:#2f7d6e;
+    --teal-soft:#5aa395;
+    --gold:#c08a2d;
+    --gold-soft:#e4c074;
+    --curve:#21564d;
+    --muted:#6f6a5c;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(192,138,45,.05), transparent 40%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR',sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px 80px;}
+
+  mjx-container{color:var(--curve);}
+  mjx-container[display="true"]{margin:.4em 0;}
+
+  /* ---------- Navigation ---------- */
+  .nav-back{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:24px;padding:8px 16px;
+    font-size:.9rem;color:var(--teal);text-decoration:none;
+    border:1px solid var(--line);border-radius:6px;
+    background:var(--panel);transition:border-color .2s;
+  }
+  .nav-back:hover{border-color:var(--teal);}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:40px 0 30px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:42px;
+  }
+  .chapno{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:62px;height:62px;border-radius:50%;
+    border:2.5px solid var(--teal);color:var(--teal);
+    font-family:'Spline Sans Mono',monospace;
+    font-size:1.9rem;font-weight:500;
+    margin-bottom:18px;background:var(--panel);
+  }
+  header h1{
+    font-family:'Gowun Batang',serif;font-weight:700;
+    font-size:2.9rem;margin:0;letter-spacing:-.01em;
+  }
+  header .lead{
+    margin:14px 0 0;color:var(--muted);font-size:1.05rem;max-width:62ch;
+  }
+
+  /* ---------- Section headings ---------- */
+  .sec-eyebrow{
+    display:flex;align-items:center;gap:12px;
+    margin:60px 0 22px;
+  }
+  .sec-eyebrow .num{
+    font-family:'Spline Sans Mono',monospace;
+    background:var(--teal);color:var(--panel);
+    width:30px;height:30px;border-radius:7px;
+    display:grid;place-items:center;font-size:.95rem;font-weight:500;
+    flex:none;
+  }
+  .sec-eyebrow h2{
+    font-family:'Gowun Batang',serif;font-size:1.65rem;margin:0;font-weight:700;
+  }
+
+  /* ---------- Formula card ---------- */
+  .keystone{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:5px solid var(--gold);
+    border-radius:4px;
+    padding:30px 34px;
+    margin:0 0 30px;
+    box-shadow:0 1px 0 rgba(0,0,0,.02);
+  }
+  .keystone .label{
+    font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:10px;
+  }
+  .keystone p{margin:0 0 12px;}
+  .keystone p:last-child{margin-bottom:0;}
+
+  .math-display{
+    text-align:center;
+    padding:14px 8px 6px;
+    font-size:1.15rem;
+    overflow-x:auto;
+  }
+
+  /* ---------- Note ---------- */
+  .note{
+    background:#fbf2e3;border:1px solid var(--gold-soft);
+    border-radius:6px;padding:20px 24px;margin-top:24px;
+  }
+  .note .tag{
+    display:inline-block;background:var(--gold);color:#fff;
+    font-size:.72rem;letter-spacing:.1em;padding:3px 10px;border-radius:4px;
+    text-transform:uppercase;font-weight:700;margin-bottom:10px;
+  }
+  .note p{margin:0 0 8px;}
+  .note p:last-child{margin-bottom:0;}
+  .note .math-display{text-align:left;padding:10px 0 0;}
+
+  footer{
+    margin-top:70px;padding-top:24px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:.85rem;text-align:center;
+  }
+
+  @media (max-width:620px){
+    header h1{font-size:2.1rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="nav-back" href="../index.html">← 목록으로</a>
+
+  <header>
+    <div class="chapno">07</div>
+    <h1>정적분의 활용 &mdash; 넓이</h1>
+    <p class="lead">곡선과 \(x\)축 사이의 넓이, 그리고 두 곡선으로 둘러싸인 부분의 넓이를 정적분으로 구하는 방법을 정리합니다.</p>
+  </header>
+
+  <!-- SECTION 2: 곡선과 x축 사이의 넓이 -->
+  <div class="sec-eyebrow">
+    <span class="num">2</span>
+    <h2>곡선과 \(x\)축 사이의 넓이</h2>
+  </div>
+
+  <div class="keystone">
+    <div class="label">핵심 정리</div>
+    <p>함수 \(f(x)\)가 닫힌구간 \([a,\,b]\)에서 연속일 때, 곡선 \(y=f(x)\)와 \(x\)축 및 두 직선 \(x=a\), \(x=b\)로 둘러싸인 부분의 넓이 \(S\)는</p>
+    <div class="math-display">
+      \[ S = \int_{a}^{b} \left|\,f(x)\,\right| \, dx \]
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="tag">왜 절댓값?</span>
+    <p>\(f(x) \ge 0\) 인 구간에서는 \(\displaystyle\int f(x)\,dx\) 자체가 넓이이지만, \(f(x) < 0\) 인 구간에서는 적분값이 음수가 됩니다.</p>
+    <p>따라서 넓이를 구할 때는 반드시 \(|f(x)|\)를 적분해야 합니다.</p>
+  </div>
+
+  <div class="note" style="margin-top:16px;">
+    <span class="tag">풀이 순서</span>
+    <p><strong>① 영점 찾기</strong> — \(f(x)=0\)의 근을 구해 구간을 나눕니다.</p>
+    <p><strong>② 부호 판별</strong> — 각 구간에서 \(f(x)\)의 부호를 확인합니다.</p>
+    <p><strong>③ 절댓값 적분</strong> — 부호가 바뀌는 구간별로 나누어 적분합니다.</p>
+    <div class="math-display" style="text-align:left;padding-top:12px;">
+      \[ S = \int_{a}^{c} f(x)\,dx \;-\; \int_{c}^{b} f(x)\,dx \]
+      <p style="color:var(--muted);font-size:.88rem;margin:6px 0 0;">(\(f(x)\ge0\) on \([a,c]\), \;\(f(x)\le0\) on \([c,b]\) 인 경우)</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3: 두 곡선으로 둘러싸인 부분의 넓이 -->
+  <div class="sec-eyebrow">
+    <span class="num">3</span>
+    <h2>두 곡선으로 둘러싸인 부분의 넓이</h2>
+  </div>
+
+  <div class="keystone">
+    <div class="label">핵심 정리</div>
+    <p>두 함수 \(f(x)\), \(g(x)\)가 닫힌구간 \([a,\,b]\)에서 연속일 때, 두 곡선 \(y=f(x)\), \(y=g(x)\) 및 두 직선 \(x=a\), \(x=b\)로 둘러싸인 부분의 넓이 \(S\)는</p>
+    <div class="math-display">
+      \[ S = \int_{a}^{b} \left|\,f(x) - g(x)\,\right| \, dx \]
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="tag">위·아래가 바뀔 때</span>
+    <p>구간 안에서 \(f(x)\)와 \(g(x)\)의 대소 관계가 바뀌면, 교점을 기준으로 구간을 나누어 적분합니다.</p>
+    <div class="math-display" style="text-align:left;padding-top:8px;">
+      \[ S = \int_{a}^{c} \{f(x)-g(x)\}\,dx + \int_{c}^{b} \{g(x)-f(x)\}\,dx \]
+      <p style="color:var(--muted);font-size:.88rem;margin:6px 0 0;">(\(f(x)\ge g(x)\) on \([a,c]\), \;\(g(x)\ge f(x)\) on \([c,b]\) 인 경우)</p>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:16px;">
+    <span class="tag">풀이 순서</span>
+    <p><strong>① 교점 찾기</strong> — \(f(x)=g(x)\)를 풀어 교점의 \(x\)좌표를 구합니다.</p>
+    <p><strong>② 대소 판별</strong> — 각 구간에서 어느 함수가 위에 있는지 확인합니다.</p>
+    <p><strong>③ 구간별 적분</strong> — 위의 함수에서 아래의 함수를 빼고 적분합니다.</p>
+  </div>
+
+  <footer>
+    07. 정적분의 활용 · 넓이
+  </footer>
+
+</div>
+</body>
+</html>
