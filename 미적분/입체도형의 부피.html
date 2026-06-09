@@ -177,8 +177,15 @@
     border:1px solid var(--grid);
     border-radius:6px;
     width:100%;
-    aspect-ratio:16/9;
+    min-height:450px;
     display:block;
+    position:relative;
+    overflow:hidden;
+  }
+  .canvas-frame canvas{
+    display:block;
+    width:100%!important;
+    height:100%!important;
   }
 
   .readout{
@@ -384,9 +391,18 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
-<script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 (function(){
   const container = document.getElementById('cv3d');
   const width = container.clientWidth || 800;
@@ -404,7 +420,7 @@
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(renderer.domElement);
 
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.minDistance = 3;
@@ -610,5 +626,6 @@
   animate();
 })();
 </script>
+
 </body>
 </html>
