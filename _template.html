@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제목을 입력하세요</title>
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500&display=swap');
+
+  :root {
+    --ink: #1a2e2a;
+    --paper: #f6f4ec;
+    --panel: #fffdf7;
+    --line: #d8d2c0;
+    --grid: #e9e4d6;
+    --teal: #2f7d6e;
+    --teal-soft: #5aa395;
+    --gold: #c08a2d;
+    --gold-soft: #e4c074;
+    --muted: #6f6a5c;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(192,138,45,.05), transparent 40%),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px 80px; }
+
+  mjx-container { color: var(--ink); }
+  mjx-container[display="true"] { margin: .4em 0; }
+
+  /* ---------- Navigation ---------- */
+  .nav-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    padding: 8px 16px;
+    font-size: .9rem;
+    color: var(--teal);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel);
+    transition: border-color .2s;
+  }
+  .nav-back:hover { border-color: var(--teal); }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 40px 0 30px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 42px;
+  }
+  .chapno {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 62px; height: 62px; border-radius: 50%;
+    border: 2.5px solid var(--teal);
+    color: var(--teal);
+    font-family: 'Spline Sans Mono', monospace;
+    font-size: 1.9rem; font-weight: 500;
+    margin-bottom: 18px;
+    background: var(--panel);
+  }
+  header h1 {
+    font-family: 'Gowun Batang', serif;
+    font-weight: 700;
+    font-size: 2.9rem;
+    margin: 0;
+    letter-spacing: -.01em;
+  }
+  header .lead {
+    margin: 14px 0 0; color: var(--muted); font-size: 1.05rem; max-width: 62ch;
+  }
+
+  /* ---------- Section headings ---------- */
+  .sec-eyebrow {
+    display: flex; align-items: center; gap: 12px;
+    margin: 60px 0 22px;
+  }
+  .sec-eyebrow .num {
+    font-family: 'Spline Sans Mono', monospace;
+    background: var(--teal); color: var(--panel);
+    width: 30px; height: 30px; border-radius: 7px;
+    display: grid; place-items: center; font-size: .95rem; font-weight: 500;
+    flex: none;
+  }
+  .sec-eyebrow h2 {
+    font-family: 'Gowun Batang', serif; font-size: 1.65rem; margin: 0; font-weight: 700;
+  }
+
+  /* ---------- Formula card ---------- */
+  .keystone {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--gold);
+    border-radius: 4px;
+    padding: 30px 34px;
+    margin: 0 0 30px;
+  }
+  .keystone .label {
+    font-size: .78rem; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); font-weight: 700; margin-bottom: 10px;
+  }
+  .keystone p { margin: 0 0 12px; }
+  .keystone p:last-child { margin-bottom: 0; }
+
+  .math-display {
+    text-align: center;
+    padding: 14px 8px 6px;
+    font-size: 1.15rem;
+    overflow-x: auto;
+  }
+
+  /* ---------- Note ---------- */
+  .note {
+    background: #fbf2e3; border: 1px solid var(--gold-soft);
+    border-radius: 6px; padding: 20px 24px; margin-top: 24px;
+  }
+  .note .tag {
+    display: inline-block; background: var(--gold); color: #fff;
+    font-size: .72rem; letter-spacing: .1em; padding: 3px 10px; border-radius: 4px;
+    text-transform: uppercase; font-weight: 700; margin-bottom: 10px;
+  }
+  .note p { margin: 0; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    margin-top: 70px; padding-top: 24px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: .85rem; text-align: center;
+  }
+
+  @media (max-width: 620px) {
+    header h1 { font-size: 2.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="nav-back" href="index.html">← 목록으로</a>
+
+  <header>
+    <div class="chapno">00</div>
+    <h1>제목을 입력하세요</h1>
+    <p class="lead">간단한 설명을 입력하세요.</p>
+  </header>
+
+  <!-- SECTION 1 -->
+  <div class="sec-eyebrow">
+    <span class="num">1</span>
+    <h2>소제목</h2>
+  </div>
+
+  <div class="keystone">
+    <div class="label">핵심 정리</div>
+    <p>내용을 입력하세요.</p>
+    <div class="math-display">
+      \[ 수식을 입력하세요 \]
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="tag">참고</span>
+    <p>추가 설명을 입력하세요.</p>
+  </div>
+
+  <footer>
+    00. 제목 &nbsp;|&nbsp; 수업 자료
+  </footer>
+
+</div>
+</body>
+</html>

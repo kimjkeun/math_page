@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수업 자료</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500&display=swap');
+
+  :root {
+    --ink: #1a2e2a;
+    --paper: #f6f4ec;
+    --panel: #fffdf7;
+    --line: #d8d2c0;
+    --grid: #e9e4d6;
+    --teal: #2f7d6e;
+    --teal-soft: #5aa395;
+    --gold: #c08a2d;
+    --gold-soft: #e4c074;
+    --muted: #6f6a5c;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(192,138,45,.05), transparent 40%),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 54px 0 30px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 42px;
+  }
+  header h1 {
+    font-family: 'Gowun Batang', serif;
+    font-weight: 700;
+    font-size: 2.6rem;
+    margin: 0;
+    letter-spacing: -.01em;
+  }
+  header .lead {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 62ch;
+  }
+
+  /* ---------- Lesson List ---------- */
+  .lesson-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .lesson-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 24px 28px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color .2s, box-shadow .2s, transform .15s;
+  }
+  .lesson-card:hover {
+    border-color: var(--teal-soft);
+    box-shadow: 0 4px 20px -8px rgba(47,125,110,.18);
+    transform: translateY(-2px);
+  }
+
+  .lesson-card .num {
+    font-family: 'Spline Sans Mono', monospace;
+    background: var(--teal);
+    color: var(--panel);
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    flex: none;
+  }
+
+  .lesson-card .info { flex: 1; }
+
+  .lesson-card .title {
+    font-family: 'Gowun Batang', serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin: 0 0 4px;
+  }
+
+  .lesson-card .desc {
+    color: var(--muted);
+    font-size: .9rem;
+    margin: 0;
+  }
+
+  .lesson-card .arrow {
+    font-size: 1.3rem;
+    color: var(--teal-soft);
+    flex: none;
+    transition: transform .2s;
+  }
+  .lesson-card:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    margin-top: 70px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .85rem;
+    text-align: center;
+  }
+
+  @media (max-width: 620px) {
+    header h1 { font-size: 2rem; }
+    .lesson-card { padding: 18px 20px; gap: 14px; }
+    .lesson-card .title { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>수업 자료</h1>
+    <p class="lead">각 주제를 클릭하면 인터랙티브 수업 자료를 확인할 수 있습니다.</p>
+  </header>
+
+  <div class="lesson-list">
+
+    <a class="lesson-card" href="integral-series.html">
+      <span class="num">07</span>
+      <div class="info">
+        <p class="title">정적분과 급수</p>
+        <p class="desc">정적분과 급수의 관계를 시각적으로 확인합니다.</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <!-- 새 수업 자료를 추가하려면 아래 템플릿을 복사하세요:
+    <a class="lesson-card" href="파일명.html">
+      <span class="num">00</span>
+      <div class="info">
+        <p class="title">제목</p>
+        <p class="desc">간단한 설명</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    -->
+
+  </div>
+
+  <footer>
+    수업 자료 모음
+  </footer>
+
+</div>
+</body>
+</html>

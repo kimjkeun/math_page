@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정적분과 급수</title>
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' },
+    startup: {
+      ready: () => {
+        MathJax.startup.defaultReady();
+      }
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1a2e2a;
+    --paper:#f6f4ec;
+    --panel:#fffdf7;
+    --line:#d8d2c0;
+    --grid:#e9e4d6;
+    --teal:#2f7d6e;
+    --teal-soft:#5aa395;
+    --gold:#c08a2d;
+    --gold-soft:#e4c074;
+    --rect:#7bbdb0;
+    --rect-stroke:#3a8576;
+    --curve:#21564d;
+    --area:#cf8f3d;
+    --muted:#6f6a5c;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(192,138,45,.05), transparent 40%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR',sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px 80px;}
+
+  mjx-container{color:var(--curve);}
+  mjx-container[display="true"]{margin:.4em 0;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:54px 0 30px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:42px;
+    position:relative;
+  }
+  .chapno{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:62px;height:62px;border-radius:50%;
+    border:2.5px solid var(--teal);
+    color:var(--teal);
+    font-family:'Spline Sans Mono',monospace;
+    font-size:1.9rem;font-weight:500;
+    margin-bottom:18px;
+    background:var(--panel);
+  }
+  header h1{
+    font-family:'Gowun Batang',serif;
+    font-weight:700;
+    font-size:2.9rem;
+    margin:0;
+    letter-spacing:-.01em;
+  }
+  header .lead{
+    margin:14px 0 0;color:var(--muted);font-size:1.05rem;max-width:62ch;
+  }
+
+  /* ---------- Section headings ---------- */
+  .sec-eyebrow{
+    display:flex;align-items:center;gap:12px;
+    margin:60px 0 22px;
+  }
+  .sec-eyebrow .num{
+    font-family:'Spline Sans Mono',monospace;
+    background:var(--teal);color:var(--panel);
+    width:30px;height:30px;border-radius:7px;
+    display:grid;place-items:center;font-size:.95rem;font-weight:500;
+    flex:none;
+  }
+  .sec-eyebrow h2{
+    font-family:'Gowun Batang',serif;font-size:1.65rem;margin:0;font-weight:700;
+  }
+
+  /* ---------- Formula card ---------- */
+  .keystone{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:5px solid var(--gold);
+    border-radius:4px;
+    padding:30px 34px;
+    margin:0 0 30px;
+    box-shadow:0 1px 0 rgba(0,0,0,.02);
+  }
+  .keystone .label{
+    font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:10px;
+  }
+  .keystone p{margin:0 0 12px;}
+  .keystone p:last-child{margin-bottom:0;}
+
+  .math-display{
+    text-align:center;
+    padding:14px 8px 6px;
+    font-size:1.15rem;
+    overflow-x:auto;
+  }
+
+  /* ---------- Interactive lab ---------- */
+  .lab{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:0;
+    overflow:hidden;
+    box-shadow:0 6px 30px -18px rgba(33,86,77,.5);
+  }
+  .lab-head{
+    background:var(--teal);
+    color:#eef6f3;
+    padding:18px 26px;
+    display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  .lab-head h3{margin:0;font-family:'Gowun Batang',serif;font-size:1.3rem;font-weight:700;}
+  .lab-head .hint{font-size:.85rem;color:#b9d9d1;}
+
+  .lab-body{padding:24px 26px 30px;}
+  .canvas-frame{
+    background:#fffefb;
+    border:1px solid var(--grid);
+    border-radius:6px;
+    width:100%;
+    aspect-ratio:16/9;
+    display:block;
+  }
+
+  .readout{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin:22px 0 6px;
+  }
+  .stat{
+    background:var(--paper);
+    border:1px solid var(--grid);
+    border-radius:6px;
+    padding:14px 16px;
+    text-align:center;
+  }
+  .stat .k{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .stat .v{
+    font-family:'Spline Sans Mono',monospace;
+    font-size:1.5rem;font-weight:500;margin-top:4px;
+  }
+  .stat.sum .v{color:var(--rect-stroke);}
+  .stat.exact .v{color:var(--area);}
+  .stat.err .v{color:var(--muted);font-size:1.25rem;}
+
+  .controls{margin-top:26px;}
+  .ctrl-row{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  }
+  .ctrl-row label{
+    font-weight:500;min-width:130px;
+    font-family:'Spline Sans Mono',monospace;font-size:.95rem;
+  }
+  input[type=range]{
+    flex:1;min-width:200px;height:5px;border-radius:3px;
+    background:linear-gradient(var(--teal),var(--teal));
+    background-size:0% 100%;background-repeat:no-repeat;
+    -webkit-appearance:none;appearance:none;cursor:pointer;
+    background-color:var(--grid);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--gold);border:3px solid var(--panel);
+    box-shadow:0 1px 4px rgba(0,0,0,.25);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;border:3px solid var(--panel);
+    background:var(--gold);box-shadow:0 1px 4px rgba(0,0,0,.25);
+  }
+  .nval{
+    font-family:'Spline Sans Mono',monospace;
+    background:var(--teal);color:var(--panel);
+    padding:3px 12px;border-radius:5px;font-size:1.05rem;min-width:54px;text-align:center;
+  }
+
+  .fn-pick{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+  .fn-pick button{
+    font-family:'Spline Sans Mono',monospace;
+    border:1px solid var(--line);background:var(--paper);
+    color:var(--ink);padding:9px 16px;border-radius:6px;cursor:pointer;
+    font-size:.92rem;transition:all .15s;
+  }
+  .fn-pick button:hover{border-color:var(--teal-soft);}
+  .fn-pick button.active{background:var(--teal);color:var(--panel);border-color:var(--teal);}
+
+  .toggle{
+    margin-top:18px;display:flex;gap:24px;flex-wrap:wrap;font-size:.92rem;
+  }
+  .toggle label{display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--muted);}
+  .toggle input{accent-color:var(--teal);width:16px;height:16px;}
+
+  /* ---------- Sign note ---------- */
+  .note{
+    background:#fbf2e3;border:1px solid var(--gold-soft);
+    border-radius:6px;padding:20px 24px;margin-top:24px;
+  }
+  .note .tag{
+    display:inline-block;background:var(--gold);color:#fff;
+    font-size:.72rem;letter-spacing:.1em;padding:3px 10px;border-radius:4px;
+    text-transform:uppercase;font-weight:700;margin-bottom:10px;
+  }
+  .note p{margin:0;}
+  .note .math-display{text-align:left;padding:10px 0 0;}
+
+  /* ---------- Corollary cards ---------- */
+  .corollary{margin-top:14px;display:grid;gap:18px;}
+  .crow{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:5px solid var(--gold);
+    border-radius:6px;
+    padding:22px 26px;
+  }
+  .crow .idx{
+    font-family:'Spline Sans Mono',monospace;color:var(--gold);
+    font-size:1.25rem;font-weight:700;
+    display:flex;align-items:center;gap:10px;margin-bottom:8px;
+  }
+  .crow .idx .cap{color:var(--muted);font-size:.9rem;font-weight:400;font-family:'Noto Sans KR',sans-serif;}
+  .crow .ex{overflow-x:auto;font-size:1.3rem;padding:4px 0;}
+  .crow .ex mjx-container[display="true"]{margin:.2em 0;}
+
+  footer{
+    margin-top:70px;padding-top:24px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:.85rem;text-align:center;
+  }
+
+  /* ---------- Navigation ---------- */
+  .nav-back{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:24px;padding:8px 16px;
+    font-size:.9rem;color:var(--teal);text-decoration:none;
+    border:1px solid var(--line);border-radius:6px;
+    background:var(--panel);transition:border-color .2s;
+  }
+  .nav-back:hover{border-color:var(--teal);}
+
+  @media (max-width:620px){
+    header h1{font-size:2.1rem;}
+    .readout{grid-template-columns:1fr;}
+    .lab-body{padding:18px 16px 24px;}
+    .ctrl-row label{min-width:100%;}
+    .crow .idx{flex-wrap:wrap;}
+    .crow .ex{font-size:1.05rem;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="nav-back" href="index.html">← 목록으로</a>
+
+  <header>
+    <div class="chapno">07</div>
+    <h1>정적분의 활용 &mdash; 정적분과 급수</h1>
+    <p class="lead">잘게 쪼갠 직사각형 넓이의 합이, 조각을 한없이 늘릴 때 곡선 아래 넓이로 모여드는 과정을 직접 움직여 보며 정적분과 급수의 관계를 확인합니다.</p>
+  </header>
+
+  <!-- SECTION 1 -->
+  <div class="sec-eyebrow">
+    <span class="num">1</span>
+    <h2>정적분과 급수</h2>
+  </div>
+
+  <div class="keystone">
+    <div class="label">핵심 정리</div>
+    <p>함수 \(f(x)\)가 닫힌구간 \([a,\,b]\)에서 연속일 때</p>
+    <div class="math-display">
+      \[ \lim_{n\to\infty}\sum_{k=1}^{n} f\!\left(a+\frac{b-a}{n}\,k\right)\frac{b-a}{n} \;=\; \int_{a}^{b} f(x)\,dx \]
+    </div>
+  </div>
+
+  <!-- INTERACTIVE LAB -->
+  <div class="lab">
+    <div class="lab-head">
+      <h3>구간을 \(n\)등분해 보기</h3>
+      <span class="hint">슬라이더를 끌어 \(n\)을 키우면 직사각형 합이 정적분 값에 가까워집니다</span>
+    </div>
+    <div class="lab-body">
+      <canvas class="canvas-frame" id="cv" width="880" height="495"></canvas>
+
+      <div class="readout">
+        <div class="stat sum">
+          <div class="k">직사각형 넓이 합 \(S_n\)</div>
+          <div class="v" id="sumVal">&mdash;</div>
+        </div>
+        <div class="stat exact">
+          <div class="k">정적분 (참값)</div>
+          <div class="v" id="exactVal">&mdash;</div>
+        </div>
+        <div class="stat err">
+          <div class="k">오차 \(|S_n - \text{참값}|\)</div>
+          <div class="v" id="errVal">&mdash;</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl-row">
+          <label for="nSlider">등분 수 n</label>
+          <input type="range" id="nSlider" min="1" max="120" value="6">
+          <span class="nval" id="nLabel">6</span>
+        </div>
+
+        <div class="fn-pick" id="fnPick">
+          <button data-fn="sq" class="active">f(x) = x²</button>
+          <button data-fn="sin">f(x) = sin x + 1</button>
+          <button data-fn="wave">f(x) = 곡선(교재 그림)</button>
+        </div>
+
+        <div class="toggle">
+          <label><input type="checkbox" id="tRect" checked> 직사각형 표시</label>
+          <label><input type="checkbox" id="tArea"> 곡선 아래 넓이 채우기</label>
+          <label><input type="checkbox" id="tRight" checked> 오른쪽 끝점 높이 \(f(x_k)\)</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="tag">f(x) ≤ 0 인 경우</span>
+    <p>함수가 \(x\)축 아래에 있으면 \(f(x_k)\le 0\) 이므로 \(\sum f(x_k)\Delta x\) 는 음수가 됩니다. 곡선과 \(x\)축 사이의 넓이 \(S\)는 양수이므로</p>
+    <div class="math-display">
+      \[ \lim_{n\to\infty}\sum_{k=1}^{n} f(x_k)\,\Delta x = -S = -\int_{a}^{b}\bigl|f(x)\bigr|\,dx = \int_{a}^{b} f(x)\,dx \]
+    </div>
+    <p style="margin-top:8px;">즉, 부호까지 포함하면 직사각형 합의 극한은 항상 정적분 값과 같습니다.</p>
+  </div>
+
+  <!-- SECTION 2: corollaries -->
+  <div class="sec-eyebrow">
+    <span class="num">2</span>
+    <h2>자주 쓰는 변형 공식</h2>
+  </div>
+
+  <div class="corollary">
+    <div class="crow">
+      <div class="idx">① <span class="cap">\(a=0,\ b=1\) 인 기본형</span></div>
+      <div class="ex">
+        \[ \lim_{n\to\infty}\sum_{k=1}^{n} f\!\left(\frac{k}{n}\right)\frac{1}{n} = \int_{0}^{1} f(x)\,dx \]
+      </div>
+    </div>
+    <div class="crow">
+      <div class="idx">② <span class="cap">\(p\)는 상수</span></div>
+      <div class="ex">
+        \[ \lim_{n\to\infty}\sum_{k=1}^{n} f\!\left(\frac{p}{n}\,k\right)\frac{p}{n} = \int_{0}^{p} f(x)\,dx = p\int_{0}^{1} f(px)\,dx \]
+      </div>
+    </div>
+    <div class="crow">
+      <div class="idx">③ <span class="cap">\(a,\ p\)는 상수</span></div>
+      <div class="ex">
+        <p style="margin:0 0 4px;color:var(--muted);font-size:.92rem;">\(x_k = a + \dfrac{p}{n}\,k\) 로 잡은 경우</p>
+        \[ \lim_{n\to\infty}\sum_{k=1}^{n} f\!\left(a+\frac{p}{n}\,k\right)\frac{p}{n} = \int_{a}^{a+p} f(x)\,dx \]
+        <p style="margin:10px 0 4px;color:var(--muted);font-size:.92rem;">\(x_k = \dfrac{p}{n}\,k\) 로 잡고 치환한 경우</p>
+        \[ \lim_{n\to\infty}\sum_{k=1}^{n} f\!\left(a+\frac{p}{n}\,k\right)\frac{p}{n} = p\int_{0}^{1} f(a+px)\,dx \]
+        <p style="margin:10px 0 4px;color:var(--muted);font-size:.92rem;">\(x_k = \dfrac{k}{n}\) 로 잡은 경우 (\(\Delta x=\tfrac{1}{n}\), 기본형 ① 적용)</p>
+        \[ \lim_{n\to\infty}\sum_{k=1}^{n} f\!\left(a+p\cdot\frac{k}{n}\right)\frac{1}{n}\cdot p = p\int_{0}^{1} f(a+px)\,dx \]
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    07. 정적분의 활용 · 정적분과 급수 &nbsp;|&nbsp; 슬라이더와 함수를 바꿔가며 직접 확인해 보세요.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  const C = {
+    grid: '#e9e4d6',
+    rect: 'rgba(123,189,176,.42)',
+    rectStroke: '#3a8576',
+    curve: '#21564d',
+    area: 'rgba(207,143,61,.30)',
+    ink: '#1a2e2a',
+    muted: '#6f6a5c'
+  };
+
+  const M = {l:54, r:30, t:28, b:46};
+  const px = x => M.l + (x - DOM.a)/(DOM.b - DOM.a) * (W - M.l - M.r);
+  const py = y => H - M.b - (y - 0)/(YR.max) * (H - M.t - M.b);
+
+  const FNS = {
+    sq:   { f: x=>x*x,                a:0, b:2,        ymax:4.4,  label:'x²' },
+    sin:  { f: x=>Math.sin(x)+1,      a:0, b:Math.PI,  ymax:2.3,  label:'sin x + 1' },
+    wave: { f: x=>1.3 + 0.9*Math.sin(1.5*x) + 0.45*Math.sin(3.1*x+0.5), a:0, b:4, ymax:3.4, label:'곡선' }
+  };
+
+  let DOM = {a:0,b:2};
+  let YR  = {max:4.4};
+  let curFn = 'sq';
+  let n = 6;
+  let showRect = true, showArea = false, rightPt = true;
+
+  function exactIntegral(fn){
+    const f = fn.f, a = fn.a, b = fn.b, N = 4000, h = (b-a)/N;
+    let s = 0;
+    for(let i=0;i<N;i++){ s += f(a + (i+0.5)*h); }
+    return s*h;
+  }
+
+  function riemann(fn, n, useRight){
+    const f = fn.f, a = fn.a, b = fn.b, dx = (b-a)/n;
+    let s = 0;
+    for(let k=1;k<=n;k++){
+      const xk = useRight ? a + k*dx : a + (k-1)*dx;
+      s += f(xk)*dx;
+    }
+    return s;
+  }
+
+  function draw(){
+    const fn = FNS[curFn];
+    DOM = {a:fn.a, b:fn.b};
+    YR  = {max:fn.ymax};
+    const dx = (fn.b - fn.a)/n;
+
+    ctx.clearRect(0,0,W,H);
+
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for(let gx=0; gx<=8; gx++){
+      const xx = M.l + gx/8*(W-M.l-M.r);
+      ctx.moveTo(xx, M.t); ctx.lineTo(xx, H-M.b);
+    }
+    for(let gy=0; gy<=5; gy++){
+      const yy = M.t + gy/5*(H-M.t-M.b);
+      ctx.moveTo(M.l, yy); ctx.lineTo(W-M.r, yy);
+    }
+    ctx.stroke();
+
+    if(showArea){
+      ctx.beginPath();
+      ctx.moveTo(px(fn.a), py(0));
+      for(let i=0;i<=300;i++){
+        const x = fn.a + i/300*(fn.b-fn.a);
+        ctx.lineTo(px(x), py(fn.f(x)));
+      }
+      ctx.lineTo(px(fn.b), py(0));
+      ctx.closePath();
+      ctx.fillStyle = C.area; ctx.fill();
+    }
+
+    if(showRect){
+      ctx.lineWidth = n>60 ? 0.5 : 1;
+      for(let k=1;k<=n;k++){
+        const xl = fn.a + (k-1)*dx;
+        const xr = fn.a + k*dx;
+        const xk = rightPt ? xr : xl;
+        const h = fn.f(xk);
+        const X = px(xl), Yt = py(h), Wd = px(xr)-px(xl), Hd = py(0)-py(h);
+        ctx.fillStyle = C.rect;
+        ctx.fillRect(X, Yt, Wd, Hd);
+        ctx.strokeStyle = C.rectStroke;
+        ctx.strokeRect(X, Yt, Wd, Hd);
+      }
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle = C.curve; ctx.lineWidth = 2.6;
+    for(let i=0;i<=400;i++){
+      const x = fn.a + i/400*(fn.b-fn.a);
+      const X = px(x), Y = py(fn.f(x));
+      i===0 ? ctx.moveTo(X,Y) : ctx.lineTo(X,Y);
+    }
+    ctx.stroke();
+
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(M.l, M.t); ctx.lineTo(M.l, H-M.b); ctx.lineTo(W-M.r, H-M.b);
+    ctx.stroke();
+
+    ctx.fillStyle = C.muted;
+    ctx.font = "15px 'Spline Sans Mono', monospace";
+    ctx.textAlign = 'center';
+    ctx.fillText('a', px(fn.a), H-M.b+22);
+    ctx.fillText('b', px(fn.b), H-M.b+22);
+    ctx.textAlign='left';
+    ctx.fillText('y = f(x)', W-M.r-92, M.t+16);
+    ctx.fillStyle = C.curve;
+    ctx.fillText('Δx = (b−a)/n = '+dx.toFixed(3), M.l+6, M.t+16);
+
+    const sumVal = riemann(fn, n, rightPt);
+    const exVal  = exactIntegral(fn);
+    document.getElementById('sumVal').textContent  = sumVal.toFixed(4);
+    document.getElementById('exactVal').textContent = exVal.toFixed(4);
+    document.getElementById('errVal').textContent  = Math.abs(sumVal-exVal).toFixed(4);
+  }
+
+  function fillRange(el){
+    const pct = (el.value - el.min)/(el.max - el.min)*100;
+    el.style.backgroundSize = pct + '% 100%';
+  }
+
+  const slider = document.getElementById('nSlider');
+  const nLabel = document.getElementById('nLabel');
+  slider.addEventListener('input', e=>{
+    n = +e.target.value;
+    nLabel.textContent = n;
+    fillRange(slider);
+    draw();
+  });
+  fillRange(slider);
+
+  document.getElementById('fnPick').addEventListener('click', e=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    document.querySelectorAll('#fnPick button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    curFn = btn.dataset.fn;
+    draw();
+  });
+
+  document.getElementById('tRect').addEventListener('change',e=>{showRect=e.target.checked;draw();});
+  document.getElementById('tArea').addEventListener('change',e=>{showArea=e.target.checked;draw();});
+  document.getElementById('tRight').addEventListener('change',e=>{rightPt=e.target.checked;draw();});
+
+  draw();
+})();
+</script>
+</body>
+</html>
