@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>속도와 거리, 곡선의 길이</title>
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1a2e2a;
+    --paper:#f6f4ec;
+    --panel:#fffdf7;
+    --line:#d8d2c0;
+    --grid:#e9e4d6;
+    --teal:#2f7d6e;
+    --teal-soft:#5aa395;
+    --gold:#c08a2d;
+    --gold-soft:#e4c074;
+    --curve:#21564d;
+    --muted:#6f6a5c;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(192,138,45,.05), transparent 40%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR',sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px 80px;}
+
+  mjx-container{color:var(--curve);}
+  mjx-container[display="true"]{margin:.4em 0;}
+
+  /* ---------- Navigation ---------- */
+  .nav-back{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:24px;padding:8px 16px;
+    font-size:.9rem;color:var(--teal);text-decoration:none;
+    border:1px solid var(--line);border-radius:6px;
+    background:var(--panel);transition:border-color .2s;
+  }
+  .nav-back:hover{border-color:var(--teal);}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:40px 0 30px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:42px;
+  }
+  .chapno{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:62px;height:62px;border-radius:50%;
+    border:2.5px solid var(--teal);color:var(--teal);
+    font-family:'Spline Sans Mono',monospace;
+    font-size:1.9rem;font-weight:500;
+    margin-bottom:18px;background:var(--panel);
+  }
+  header h1{
+    font-family:'Gowun Batang',serif;font-weight:700;
+    font-size:2.9rem;margin:0;letter-spacing:-.01em;
+  }
+  header .lead{
+    margin:14px 0 0;color:var(--muted);font-size:1.05rem;max-width:62ch;
+  }
+
+  /* ---------- Section headings ---------- */
+  .sec-eyebrow{
+    display:flex;align-items:center;gap:12px;
+    margin:60px 0 22px;
+  }
+  .sec-eyebrow .num{
+    font-family:'Spline Sans Mono',monospace;
+    background:var(--teal);color:var(--panel);
+    width:30px;height:30px;border-radius:7px;
+    display:grid;place-items:center;font-size:.95rem;font-weight:500;
+    flex:none;
+  }
+  .sec-eyebrow h2{
+    font-family:'Gowun Batang',serif;font-size:1.65rem;margin:0;font-weight:700;
+  }
+
+  /* ---------- Formula card ---------- */
+  .keystone{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:5px solid var(--gold);
+    border-radius:4px;
+    padding:30px 34px;
+    margin:0 0 30px;
+    box-shadow:0 1px 0 rgba(0,0,0,.02);
+  }
+  .keystone .label{
+    font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:10px;
+  }
+  .keystone p{margin:0 0 12px;}
+  .keystone p:last-child{margin-bottom:0;}
+
+  .math-display{
+    text-align:center;
+    padding:14px 8px 6px;
+    font-size:1.15rem;
+    overflow-x:auto;
+  }
+
+  /* ---------- Note ---------- */
+  .note{
+    background:#fbf2e3;border:1px solid var(--gold-soft);
+    border-radius:6px;padding:20px 24px;margin-top:24px;
+  }
+  .note .tag{
+    display:inline-block;background:var(--gold);color:#fff;
+    font-size:.72rem;letter-spacing:.1em;padding:3px 10px;border-radius:4px;
+    text-transform:uppercase;font-weight:700;margin-bottom:10px;
+  }
+  .note p{margin:0 0 8px;}
+  .note p:last-child{margin-bottom:0;}
+  .note .math-display{text-align:left;padding:10px 0 0;}
+
+  /* ---------- Sub-section ---------- */
+  .sub-section{
+    margin-top:30px;
+    padding:24px 28px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+  }
+  .sub-section h3{
+    font-family:'Gowun Batang',serif;font-weight:700;
+    font-size:1.2rem;margin:0 0 14px;
+    color:var(--teal);
+  }
+  .sub-section p{margin:0 0 10px;}
+  .sub-section p:last-child{margin-bottom:0;}
+
+  footer{
+    margin-top:70px;padding-top:24px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:.85rem;text-align:center;
+  }
+
+  @media (max-width:620px){
+    header h1{font-size:2.1rem;}
+    .keystone{padding:22px 20px;}
+    .sub-section{padding:18px 16px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="nav-back" href="../index.html">← 목록으로</a>
+
+  <header>
+    <div class="chapno">07</div>
+    <h1>속도와 거리, 곡선의 길이</h1>
+    <p class="lead">좌표평면 위를 움직이는 점이 움직인 거리와 곡선의 길이를 정적분으로 구하는 방법을 정리합니다.</p>
+  </header>
+
+  <!-- SECTION 5: 좌표평면 위를 움직이는 점이 움직인 거리 -->
+  <div class="sec-eyebrow">
+    <span class="num">5</span>
+    <h2>좌표평면 위를 움직이는 점이 움직인 거리</h2>
+  </div>
+
+  <div class="keystone">
+    <div class="label">핵심 정리</div>
+    <p>좌표평면 위를 움직이는 점 P의 시각 \(t\)에서의 위치 \((x,\,y)\)가</p>
+    <div class="math-display" style="text-align:left;">
+      \[ x = f(t), \quad y = g(t) \]
+    </div>
+    <p>일 때, 시각 \(t=a\)에서 \(t=b\)까지 점 P가 움직인 거리 \(s\)는</p>
+    <div class="math-display">
+      \[ s = \int_{a}^{b} \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}\,dt \]
+    </div>
+    <div class="math-display">
+      \[ = \int_{a}^{b} \sqrt{\{f'(t)\}^2 + \{g'(t)\}^2}\,dt \]
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="tag">설명</span>
+    <p>점 P가 움직인 거리는 시각 \(t\) (\(a \le t \le b\))의 함수이므로 \(s = s(t)\)로 나타내기로 하자.</p>
+    <p>그림과 같이 시각 \(t\)에서 점 \(\mathrm{A}(x,\,y)\)에 있던 점 P가 시각 \(t+\Delta t\)에서 점 \(\mathrm{B}(x+\Delta x,\;y+\Delta y)\)로 이동했을 때 \(s\)의 증분 \(\Delta s\)는 \(\Delta t\)가 충분히 작으면 \(\sqrt{(\Delta x)^2 + (\Delta y)^2}\)에 가까워지므로</p>
+    <div class="math-display" style="text-align:left;">
+      \[ s'(t) = \frac{ds}{dt} = \lim_{\Delta t \to 0} \frac{\Delta s}{\Delta t} = \lim_{\Delta t \to 0} \sqrt{\left(\frac{\Delta x}{\Delta t}\right)^2 + \left(\frac{\Delta y}{\Delta t}\right)^2} = \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2} \]
+    </div>
+    <p>따라서 시각 \(t=a\)에서 \(t=b\)까지 점 P가 움직인 거리 \(s\)는</p>
+    <div class="math-display" style="text-align:left;">
+      \[ s = s(b) - s(a) = \Big[s(t)\Big]_{a}^{b} = \int_{a}^{b} \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}\,dt \]
+    </div>
+  </div>
+
+  <!-- SECTION 6: 곡선의 길이 -->
+  <div class="sec-eyebrow">
+    <span class="num">6</span>
+    <h2>곡선의 길이</h2>
+  </div>
+
+  <div class="sub-section">
+    <h3>(1) 매개변수로 나타낸 곡선의 길이</h3>
+    <p>곡선 위의 점 \((x,\,y)\)가</p>
+    <div class="math-display" style="text-align:left;">
+      \[ x = f(t), \quad y = g(t) \]
+    </div>
+    <p>이고 겹쳐지는 부분이 없을 때, \(a \le t \le b\)에서 이 곡선의 길이 \(l\)은</p>
+    <div class="math-display">
+      \[ l = \int_{a}^{b} \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}\,dt \]
+    </div>
+    <div class="math-display">
+      \[ = \int_{a}^{b} \sqrt{\{f'(t)\}^2 + \{g'(t)\}^2}\,dt \]
+    </div>
+  </div>
+
+  <div class="sub-section" style="margin-top:16px;">
+    <h3>(2) \(y = f(x)\) 꼴 곡선의 길이</h3>
+    <p>\(a \le x \le b\)에서 곡선 \(y = f(x)\)의 길이 \(l\)은</p>
+    <div class="math-display">
+      \[ l = \int_{a}^{b} \sqrt{1 + \left(\frac{dy}{dx}\right)^2}\,dx \]
+    </div>
+    <div class="math-display">
+      \[ = \int_{a}^{b} \sqrt{1 + \{f'(x)\}^2}\,dx \]
+    </div>
+  </div>
+
+  <footer>
+    07. 정적분의 활용 · 속도와 거리, 곡선의 길이
+  </footer>
+
+</div>
+</body>
+</html>
