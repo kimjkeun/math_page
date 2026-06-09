@@ -55,10 +55,51 @@
     max-width: 62ch;
   }
 
+  /* ---------- Category ---------- */
+  .category {
+    margin-bottom: 40px;
+  }
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .category-header .icon {
+    font-family: 'Spline Sans Mono', monospace;
+    background: var(--teal);
+    color: var(--panel);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: .85rem;
+    font-weight: 500;
+    flex: none;
+  }
+  .category-header h2 {
+    font-family: 'Gowun Batang', serif;
+    font-weight: 700;
+    font-size: 1.45rem;
+    margin: 0;
+  }
+  .category-empty {
+    color: var(--muted);
+    font-size: .9rem;
+    padding: 20px 24px;
+    background: var(--panel);
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    text-align: center;
+  }
+
   /* ---------- Lesson List ---------- */
   .lesson-list {
     display: grid;
-    gap: 16px;
+    gap: 12px;
   }
 
   .lesson-card {
@@ -68,7 +109,7 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 24px 28px;
+    padding: 22px 26px;
     text-decoration: none;
     color: var(--ink);
     transition: border-color .2s, box-shadow .2s, transform .15s;
@@ -81,14 +122,14 @@
 
   .lesson-card .num {
     font-family: 'Spline Sans Mono', monospace;
-    background: var(--teal);
-    color: var(--panel);
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    background: var(--gold);
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
     display: grid;
     place-items: center;
-    font-size: 1.1rem;
+    font-size: .95rem;
     font-weight: 500;
     flex: none;
   }
@@ -98,13 +139,13 @@
   .lesson-card .title {
     font-family: 'Gowun Batang', serif;
     font-weight: 700;
-    font-size: 1.25rem;
-    margin: 0 0 4px;
+    font-size: 1.15rem;
+    margin: 0 0 3px;
   }
 
   .lesson-card .desc {
     color: var(--muted);
-    font-size: .9rem;
+    font-size: .85rem;
     margin: 0;
   }
 
@@ -143,34 +184,76 @@
     <p class="lead">각 주제를 클릭하면 인터랙티브 수업 자료를 확인할 수 있습니다.</p>
   </header>
 
-  <div class="lesson-list">
-
-    <a class="lesson-card" href="integral-series.html">
-      <span class="num">07</span>
-      <div class="info">
-        <p class="title">정적분과 급수</p>
-        <p class="desc">정적분과 급수의 관계를 시각적으로 확인합니다.</p>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-
-    <!-- 새 수업 자료를 추가하려면 아래 템플릿을 복사하세요:
-    <a class="lesson-card" href="파일명.html">
-      <span class="num">00</span>
-      <div class="info">
-        <p class="title">제목</p>
-        <p class="desc">간단한 설명</p>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-    -->
-
-  </div>
+  <div id="categories"></div>
 
   <footer>
     수업 자료 모음
   </footer>
 
 </div>
+
+<script>
+(function() {
+  const REPO = 'kimjkeun/math_page';
+  const CATEGORIES = [
+    { folder: '미적분', icon: 'I' },
+    { folder: '수학과제탐구', icon: 'II' }
+  ];
+
+  const container = document.getElementById('categories');
+
+  async function fetchFiles(folder) {
+    const url = `https://api.github.com/repos/${REPO}/contents/${encodeURIComponent(folder)}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data
+        .filter(f => f.name.endsWith('.html') && !f.name.startsWith('_'))
+        .map(f => f.name);
+    } catch { return []; }
+  }
+
+  function createCard(folder, filename, index) {
+    const title = filename.replace('.html', '');
+    const num = String(index + 1).padStart(2, '0');
+    return `
+      <a class="lesson-card" href="${folder}/${filename}">
+        <span class="num">${num}</span>
+        <div class="info">
+          <p class="title">${title}</p>
+        </div>
+        <span class="arrow">→</span>
+      </a>`;
+  }
+
+  async function render() {
+    for (const cat of CATEGORIES) {
+      const files = await fetchFiles(cat.folder);
+      const section = document.createElement('div');
+      section.className = 'category';
+
+      let html = `
+        <div class="category-header">
+          <span class="icon">${cat.icon}</span>
+          <h2>${cat.folder}</h2>
+        </div>`;
+
+      if (files.length > 0) {
+        html += '<div class="lesson-list">';
+        files.forEach((f, i) => { html += createCard(cat.folder, f, i); });
+        html += '</div>';
+      } else {
+        html += '<p class="category-empty">준비 중인 자료입니다.</p>';
+      }
+
+      section.innerHTML = html;
+      container.appendChild(section);
+    }
+  }
+
+  render();
+})();
+</script>
 </body>
 </html>
