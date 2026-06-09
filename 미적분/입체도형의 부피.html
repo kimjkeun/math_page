@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>입체도형의 부피</title>
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1a2e2a;
+    --paper:#f6f4ec;
+    --panel:#fffdf7;
+    --line:#d8d2c0;
+    --grid:#e9e4d6;
+    --teal:#2f7d6e;
+    --teal-soft:#5aa395;
+    --gold:#c08a2d;
+    --gold-soft:#e4c074;
+    --curve:#21564d;
+    --muted:#6f6a5c;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(192,138,45,.05), transparent 40%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR',sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px 80px;}
+
+  mjx-container{color:var(--curve);}
+  mjx-container[display="true"]{margin:.4em 0;}
+
+  /* ---------- Navigation ---------- */
+  .nav-back{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:24px;padding:8px 16px;
+    font-size:.9rem;color:var(--teal);text-decoration:none;
+    border:1px solid var(--line);border-radius:6px;
+    background:var(--panel);transition:border-color .2s;
+  }
+  .nav-back:hover{border-color:var(--teal);}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:40px 0 30px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:42px;
+  }
+  .chapno{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:62px;height:62px;border-radius:50%;
+    border:2.5px solid var(--teal);color:var(--teal);
+    font-family:'Spline Sans Mono',monospace;
+    font-size:1.9rem;font-weight:500;
+    margin-bottom:18px;background:var(--panel);
+  }
+  header h1{
+    font-family:'Gowun Batang',serif;font-weight:700;
+    font-size:2.9rem;margin:0;letter-spacing:-.01em;
+  }
+  header .lead{
+    margin:14px 0 0;color:var(--muted);font-size:1.05rem;max-width:62ch;
+  }
+
+  /* ---------- Section headings ---------- */
+  .sec-eyebrow{
+    display:flex;align-items:center;gap:12px;
+    margin:60px 0 22px;
+  }
+  .sec-eyebrow .num{
+    font-family:'Spline Sans Mono',monospace;
+    background:var(--teal);color:var(--panel);
+    width:30px;height:30px;border-radius:7px;
+    display:grid;place-items:center;font-size:.95rem;font-weight:500;
+    flex:none;
+  }
+  .sec-eyebrow h2{
+    font-family:'Gowun Batang',serif;font-size:1.65rem;margin:0;font-weight:700;
+  }
+
+  /* ---------- Formula card ---------- */
+  .keystone{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:5px solid var(--gold);
+    border-radius:4px;
+    padding:30px 34px;
+    margin:0 0 30px;
+    box-shadow:0 1px 0 rgba(0,0,0,.02);
+  }
+  .keystone .label{
+    font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:10px;
+  }
+  .keystone p{margin:0 0 12px;}
+  .keystone p:last-child{margin-bottom:0;}
+
+  .math-display{
+    text-align:center;
+    padding:14px 8px 6px;
+    font-size:1.15rem;
+    overflow-x:auto;
+  }
+
+  /* ---------- Note ---------- */
+  .note{
+    background:#fbf2e3;border:1px solid var(--gold-soft);
+    border-radius:6px;padding:20px 24px;margin-top:24px;
+  }
+  .note .tag{
+    display:inline-block;background:var(--gold);color:#fff;
+    font-size:.72rem;letter-spacing:.1em;padding:3px 10px;border-radius:4px;
+    text-transform:uppercase;font-weight:700;margin-bottom:10px;
+  }
+  .note p{margin:0 0 8px;}
+  .note p:last-child{margin-bottom:0;}
+  .note .math-display{text-align:left;padding:10px 0 0;}
+
+  /* ---------- Example ---------- */
+  .example{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:28px 32px;
+    margin-top:24px;
+  }
+  .example .ex-tag{
+    display:inline-block;background:var(--teal);color:var(--panel);
+    font-size:.72rem;letter-spacing:.1em;padding:3px 10px;border-radius:4px;
+    text-transform:uppercase;font-weight:700;margin-bottom:14px;
+  }
+  .example p{margin:0 0 10px;}
+  .example p:last-child{margin-bottom:0;}
+  .example .math-display{text-align:left;padding:8px 0 4px;}
+  .example .solution{
+    margin-top:18px;padding-top:18px;border-top:1px solid var(--grid);
+  }
+  .example .solution p{margin:0 0 8px;}
+
+  /* ---------- Interactive lab ---------- */
+  .lab{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:0;overflow:hidden;
+    box-shadow:0 6px 30px -18px rgba(33,86,77,.5);
+    margin-top:24px;
+  }
+  .lab-head{
+    background:var(--teal);color:#eef6f3;
+    padding:18px 26px;
+    display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  .lab-head h3{margin:0;font-family:'Gowun Batang',serif;font-size:1.3rem;font-weight:700;}
+  .lab-head .hint{font-size:.85rem;color:#b9d9d1;}
+
+  .lab-body{padding:24px 26px 30px;}
+  .canvas-frame{
+    background:#fffefb;
+    border:1px solid var(--grid);
+    border-radius:6px;
+    width:100%;
+    aspect-ratio:16/9;
+    display:block;
+  }
+
+  .readout{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin:22px 0 6px;
+  }
+  .stat{
+    background:var(--paper);
+    border:1px solid var(--grid);
+    border-radius:6px;
+    padding:14px 16px;
+    text-align:center;
+  }
+  .stat .k{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .stat .v{
+    font-family:'Spline Sans Mono',monospace;
+    font-size:1.4rem;font-weight:500;margin-top:4px;
+  }
+
+  .controls{margin-top:26px;}
+  .ctrl-row{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  }
+  .ctrl-row label{
+    font-weight:500;min-width:130px;
+    font-family:'Spline Sans Mono',monospace;font-size:.95rem;
+  }
+  input[type=range]{
+    flex:1;min-width:200px;height:5px;border-radius:3px;
+    background:linear-gradient(var(--teal),var(--teal));
+    background-size:0% 100%;background-repeat:no-repeat;
+    -webkit-appearance:none;appearance:none;cursor:pointer;
+    background-color:var(--grid);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--gold);border:3px solid var(--panel);
+    box-shadow:0 1px 4px rgba(0,0,0,.25);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;border:3px solid var(--panel);
+    background:var(--gold);box-shadow:0 1px 4px rgba(0,0,0,.25);
+  }
+  .nval{
+    font-family:'Spline Sans Mono',monospace;
+    background:var(--teal);color:var(--panel);
+    padding:3px 12px;border-radius:5px;font-size:1.05rem;min-width:54px;text-align:center;
+  }
+  .fn-pick{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+  .fn-pick button{
+    font-family:'Spline Sans Mono',monospace;
+    border:1px solid var(--line);background:var(--paper);
+    color:var(--ink);padding:9px 16px;border-radius:6px;cursor:pointer;
+    font-size:.92rem;transition:all .15s;
+  }
+  .fn-pick button:hover{border-color:var(--teal-soft);}
+  .fn-pick button.active{background:var(--teal);color:var(--panel);border-color:var(--teal);}
+
+  footer{
+    margin-top:70px;padding-top:24px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:.85rem;text-align:center;
+  }
+
+  @media (max-width:620px){
+    header h1{font-size:2.1rem;}
+    .keystone{padding:22px 20px;}
+    .example{padding:20px 18px;}
+    .readout{grid-template-columns:1fr;}
+    .lab-body{padding:18px 16px 24px;}
+    .ctrl-row label{min-width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="nav-back" href="../index.html">← 목록으로</a>
+
+  <header>
+    <div class="chapno">07</div>
+    <h1>입체도형의 부피</h1>
+    <p class="lead">단면의 넓이 \(S(x)\)를 적분하여 입체도형의 부피를 구하는 방법을 정리합니다.</p>
+  </header>
+
+  <!-- SECTION 1: 핵심 공식 -->
+  <div class="sec-eyebrow">
+    <span class="num">1</span>
+    <h2>핵심 공식</h2>
+  </div>
+
+  <div class="keystone">
+    <div class="label">핵심 정리</div>
+    <p>닫힌구간 \([a,\,b]\)에서 \(x\)좌표가 \(x\)인 점을 지나고 \(x\)축에 수직인 평면으로 자른 단면의 넓이가 \(S(x)\)이고, 함수 \(S(x)\)가 \([a,\,b]\)에서 연속일 때, 이 입체도형의 부피 \(V\)는</p>
+    <div class="math-display">
+      \[ V = \int_{a}^{b} S(x)\,dx \]
+    </div>
+  </div>
+
+  <!-- SECTION 2: 유도 과정 -->
+  <div class="sec-eyebrow">
+    <span class="num">2</span>
+    <h2>유도 과정</h2>
+  </div>
+
+  <div class="note">
+    <span class="tag">설명</span>
+    <p>\(x\)축 위의 닫힌구간 \([a,\,b]\)를 \(n\)등분하여 양 끝 점과 각 분점의 \(x\)좌표를 차례로</p>
+    <div class="math-display" style="text-align:left;">
+      \[ a = x_0,\; x_1,\; x_2,\; \cdots,\; x_{n-1},\; x_n = b \]
+    </div>
+    <p>라 하고, 닫힌구간 \([x_{k-1},\,x_k]\)의 길이를 \(\Delta x\)라 하면</p>
+    <div class="math-display" style="text-align:left;">
+      \[ \Delta x = \frac{b-a}{n},\quad x_k = a + k\Delta x \quad (k=1,\,2,\,3,\,\cdots,\,n) \]
+    </div>
+    <p>이때 각 점 \(x_k\)에서 \(x\)축에 수직인 평면으로 자른 단면의 넓이 \(S(x_k)\)를 밑면의 넓이로 하고 높이가 \(\Delta x\)인 \(n\)개의 기둥의 부피의 합을 \(V_n\)이라 하면</p>
+    <div class="math-display" style="text-align:left;">
+      \[ V_n = S(x_1)\Delta x + S(x_2)\Delta x + \cdots + S(x_n)\Delta x = \sum_{k=1}^{n} S(x_k)\Delta x \]
+    </div>
+    <p>입체도형의 부피 \(V\)는 정적분과 급수의 관계에 의하여</p>
+    <div class="math-display" style="text-align:left;">
+      \[ V = \lim_{n\to\infty} V_n = \lim_{n\to\infty} \sum_{k=1}^{n} S(x_k)\,\Delta x = \int_{a}^{b} S(x)\,dx \]
+    </div>
+  </div>
+
+  <!-- SECTION 3: Interactive -->
+  <div class="sec-eyebrow">
+    <span class="num">3</span>
+    <h2>직접 확인하기</h2>
+  </div>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h3>단면 기둥의 합 → 부피</h3>
+      <span class="hint">슬라이더로 \(n\)을 키우면 기둥 합이 실제 부피에 가까워집니다</span>
+    </div>
+    <div class="lab-body">
+      <div class="canvas-frame" id="cv3d"></div>
+
+      <div class="readout">
+        <div class="stat">
+          <div class="k">기둥 합 \(V_n\)</div>
+          <div class="v" id="sumVal" style="color:var(--teal);">&mdash;</div>
+        </div>
+        <div class="stat">
+          <div class="k">실제 부피 \(V\)</div>
+          <div class="v" id="exactVal" style="color:var(--gold);">&mdash;</div>
+        </div>
+        <div class="stat">
+          <div class="k">오차</div>
+          <div class="v" id="errVal" style="color:var(--muted);">&mdash;</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl-row">
+          <label for="nSlider">등분 수 n</label>
+          <input type="range" id="nSlider" min="1" max="80" value="5">
+          <span class="nval" id="nLabel">5</span>
+        </div>
+        <div class="fn-pick" id="fnPick">
+          <button data-fn="circle" class="active">원형 단면 (구)</button>
+          <button data-fn="square">정사각형 단면</button>
+          <button data-fn="exp">S(x) = eˣ+1 단면</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: 예제 -->
+  <div class="sec-eyebrow">
+    <span class="num">4</span>
+    <h2>예제</h2>
+  </div>
+
+  <div class="example">
+    <span class="ex-tag">예</span>
+    <p>곡선 \(y = e^t + 1\)과 \(x\)축, \(y\)축 및 직선 \(x = \ln 3\)으로 둘러싸인 부분을 밑면으로 하는 입체도형이 있다. 이 입체도형을 \(x\)축에 수직인 평면으로 자른 단면이 모두 정사각형일 때, 이 입체도형의 부피 \(V\)를 구해 보자.</p>
+
+    <div class="solution">
+      <p>\(0 \le t \le \ln 3\)인 실수 \(t\)에 대하여 직선 \(x=t\)를 포함하고 \(x\)축에 수직인 평면으로 자른 단면인 정사각형의 넓이를 \(S(t)\)라 하면</p>
+      <div class="math-display" style="text-align:left;">
+        \[ S(t) = (e^t + 1)^2 = e^{2t} + 2e^t + 1 \]
+      </div>
+      <p>따라서 구하는 입체도형의 부피 \(V\)는</p>
+      <div class="math-display" style="text-align:left;">
+        \[\begin{aligned}
+        V &= \int_{0}^{\ln 3} S(t)\,dt \\[6pt]
+          &= \int_{0}^{\ln 3} (e^{2t} + 2e^t + 1)\,dt \\[6pt]
+          &= \left[\frac{1}{2}e^{2t} + 2e^t + t\right]_{0}^{\ln 3} \\[6pt]
+          &= \left(\frac{1}{2}e^{2\ln 3} + 2e^{\ln 3} + \ln 3\right) - \left(\frac{1}{2}e^{0} + 2e^{0} + 0\right) \\[6pt]
+          &= \left(\frac{1}{2}\times 9 + 2\times 3 + \ln 3\right) - \left(\frac{1}{2} + 2 + 0\right) \\[6pt]
+          &= 8 + \ln 3
+        \end{aligned}\]
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    07. 정적분의 활용 · 입체도형의 부피
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+  const container = document.getElementById('cv3d');
+  const width = container.clientWidth || 800;
+  const height = container.clientHeight || 450;
+
+  // Three.js setup
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xfffefb);
+
+  const camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 100);
+  camera.position.set(5, 3, 5);
+
+  const renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 3;
+  controls.maxDistance = 15;
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(3, 5, 4);
+  scene.add(dirLight);
+
+  // Axis helper
+  const axLen = 3.5;
+  const axisMat = new THREE.LineBasicMaterial({color:0x1a2e2a});
+  function addAxis(dir){
+    const pts = [new THREE.Vector3(0,0,0), dir.clone().multiplyScalar(axLen)];
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    scene.add(new THREE.Line(geo, axisMat));
+  }
+  addAxis(new THREE.Vector3(1,0,0));
+  addAxis(new THREE.Vector3(0,1,0));
+  addAxis(new THREE.Vector3(0,0,1));
+
+  // Functions
+  const FNS = {
+    circle: {
+      // sphere radius R: r(x)=sqrt(R²-x²), circular cross-section
+      radius: x => Math.sqrt(Math.max(0, 4 - x*x)),
+      a:-2, b:2, shape:'circle',
+      exact: 32*Math.PI/3,
+      S: x => Math.PI*(4-x*x)
+    },
+    square: {
+      // side = (2-x) on [0,2], square cross-section
+      side: x => Math.max(0, 2-x),
+      a:0, b:2, shape:'square',
+      exact: 8/3,
+      S: x => (2-x)*(2-x)
+    },
+    exp: {
+      // side = sqrt(e^x+1) on [0,ln3], square cross-section
+      side: x => Math.sqrt(Math.exp(x)+1),
+      a:0, b:Math.log(3), shape:'square',
+      exact: 2+Math.log(3),
+      S: x => Math.exp(x)+1
+    }
+  };
+
+  let curFn = 'circle';
+  let n = 5;
+  let slabGroup = new THREE.Group();
+  let solidMesh = null;
+  scene.add(slabGroup);
+
+  const slabMat = new THREE.MeshPhongMaterial({
+    color:0x7bbdb0, opacity:0.55, transparent:true, side:THREE.DoubleSide
+  });
+  const slabEdgeMat = new THREE.LineBasicMaterial({color:0x3a8576});
+  const solidMat = new THREE.MeshPhongMaterial({
+    color:0xcf8f3d, opacity:0.18, transparent:true, side:THREE.DoubleSide
+  });
+
+  function riemannSum(fn, n){
+    const S=fn.S, a=fn.a, b=fn.b, dx=(b-a)/n;
+    let s=0;
+    for(let k=1;k<=n;k++) s += S(a+k*dx)*dx;
+    return s;
+  }
+
+  function buildScene(){
+    // clear slabs
+    while(slabGroup.children.length) slabGroup.remove(slabGroup.children[0]);
+    if(solidMesh){ scene.remove(solidMesh); solidMesh=null; }
+
+    const fn = FNS[curFn];
+    const a=fn.a, b=fn.b;
+    const dx=(b-a)/n;
+    const scale = 3/(b-a); // normalize to ~3 units length
+
+    // build slabs
+    for(let k=1;k<=n;k++){
+      const xk = a + k*dx; // right endpoint
+      const xMid = a + (k-0.5)*dx;
+      const posX = (xMid - (a+b)/2) * scale;
+      const thickness = dx * scale;
+
+      if(fn.shape === 'circle'){
+        const r = fn.radius(xk) * scale * 0.5;
+        if(r > 0.001){
+          const geo = new THREE.CylinderGeometry(r, r, thickness, 32);
+          geo.rotateZ(Math.PI/2);
+          const mesh = new THREE.Mesh(geo, slabMat);
+          mesh.position.x = posX;
+          slabGroup.add(mesh);
+
+          const edges = new THREE.EdgesGeometry(geo);
+          const line = new THREE.LineSegments(edges, slabEdgeMat);
+          line.position.x = posX;
+          slabGroup.add(line);
+        }
+      } else {
+        const side = fn.side(xk) * scale * 0.5;
+        if(side > 0.001){
+          const geo = new THREE.BoxGeometry(thickness, side, side);
+          const mesh = new THREE.Mesh(geo, slabMat);
+          mesh.position.x = posX;
+          slabGroup.add(mesh);
+
+          const edges = new THREE.EdgesGeometry(geo);
+          const line = new THREE.LineSegments(edges, slabEdgeMat);
+          line.position.x = posX;
+          slabGroup.add(line);
+        }
+      }
+    }
+
+    // build transparent solid outline
+    if(fn.shape === 'circle'){
+      const pts = [];
+      const segments = 80;
+      for(let i=0;i<=segments;i++){
+        const x = a + i/segments*(b-a);
+        const r = fn.radius(x)*scale*0.5;
+        pts.push(new THREE.Vector2(r, (x-(a+b)/2)*scale));
+      }
+      const latheGeo = new THREE.LatheGeometry(pts, 48);
+      latheGeo.rotateX(Math.PI/2);
+      latheGeo.rotateZ(Math.PI/2);
+      solidMesh = new THREE.Mesh(latheGeo, solidMat);
+      scene.add(solidMesh);
+    } else {
+      // outline for square cross-sections: show wireframe of the solid
+      const shape = new THREE.Group();
+      const segments = 40;
+      const lineMat = new THREE.LineBasicMaterial({color:0xcf8f3d, opacity:0.4, transparent:true});
+      for(let i=0;i<=segments;i++){
+        const x = a + i/segments*(b-a);
+        const posX = (x-(a+b)/2)*scale;
+        const side = fn.side(x)*scale*0.5;
+        if(side>0.001){
+          const pts = [
+            new THREE.Vector3(posX, -side/2, -side/2),
+            new THREE.Vector3(posX,  side/2, -side/2),
+            new THREE.Vector3(posX,  side/2,  side/2),
+            new THREE.Vector3(posX, -side/2,  side/2),
+            new THREE.Vector3(posX, -side/2, -side/2)
+          ];
+          const geo = new THREE.BufferGeometry().setFromPoints(pts);
+          shape.add(new THREE.Line(geo, lineMat));
+        }
+      }
+      solidMesh = shape;
+      scene.add(solidMesh);
+    }
+
+    // update readout
+    const sumV = riemannSum(fn, n);
+    document.getElementById('sumVal').textContent = sumV.toFixed(4);
+    document.getElementById('exactVal').textContent = fn.exact.toFixed(4);
+    document.getElementById('errVal').textContent = Math.abs(sumV-fn.exact).toFixed(4);
+  }
+
+  function fillRange(el){
+    const pct = (el.value-el.min)/(el.max-el.min)*100;
+    el.style.backgroundSize = pct+'% 100%';
+  }
+
+  const slider = document.getElementById('nSlider');
+  const nLabel = document.getElementById('nLabel');
+  slider.addEventListener('input', e=>{
+    n = +e.target.value;
+    nLabel.textContent = n;
+    fillRange(slider);
+    buildScene();
+  });
+  fillRange(slider);
+
+  document.getElementById('fnPick').addEventListener('click', e=>{
+    const btn=e.target.closest('button'); if(!btn) return;
+    document.querySelectorAll('#fnPick button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    curFn = btn.dataset.fn;
+    buildScene();
+  });
+
+  // Animation loop
+  function animate(){
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  // Resize
+  window.addEventListener('resize', ()=>{
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+
+  buildScene();
+  animate();
+})();
+</script>
+</body>
+</html>
